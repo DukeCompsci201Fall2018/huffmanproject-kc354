@@ -56,11 +56,6 @@ public class HuffProcessor {
 		in.reset();
 		writeCompressedBits(codings, in, out);
 
-		/*while (true){
-			int val = in.readBits(BITS_PER_WORD);
-			if (val == -1) break;
-			out.writeBits(BITS_PER_WORD, val);
-		}*/
 		out.close();
 	}
 	private void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) 
@@ -87,11 +82,6 @@ public class HuffProcessor {
 	// Write the tree to the header
 	private void writeHeader(HuffNode root, BitOutputStream out) 
 	{
-		//HuffNode current = root;
-		/*if(current == null)
-		{
-			return;
-		}*/
 		if(root.myLeft != null && root.myRight != null)
 		{
 			out.writeBits(1, 0);
@@ -153,17 +143,13 @@ public class HuffProcessor {
 		{
 			HuffNode left = pq.remove();
 			HuffNode right = pq.remove();
-			
-			//System.out.println("left:" + left.myValue + " " + left.myWeight);
-			//System.out.println("right" + right.myValue + " " + right.myWeight);
-			
+						
 			HuffNode mergeW = new HuffNode(0,left.myWeight + right.myWeight, left, right);
 			
 			pq.add(mergeW);
 		}
 		
 		HuffNode root = pq.remove();
-		//System.out.println("root: " + root.myValue + " " + root.myWeight);
 		
 		return root;
 	}
