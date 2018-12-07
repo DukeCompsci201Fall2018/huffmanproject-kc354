@@ -88,6 +88,10 @@ public class HuffProcessor {
 	private void writeHeader(HuffNode root, BitOutputStream out) 
 	{
 		HuffNode current = root;
+		if(current == null)
+		{
+			return;
+		}
 		if(current.myValue == 0)
 		{
 			out.writeBits(1, 0);
@@ -113,7 +117,7 @@ public class HuffProcessor {
 	{
 		if (root == null)
 		{
-			System.out.println("Root is null");
+			//System.out.println("Root is null");
 			return;
 		}
 		if (root.myLeft == null && root.myRight == null)
@@ -151,8 +155,8 @@ public class HuffProcessor {
 			HuffNode left = pq.remove();
 			HuffNode right = pq.remove();
 			
-			System.out.println("left:" + left.myValue + " " + left.myWeight);
-			System.out.println("right" + right.myValue + " " + right.myWeight);
+			//System.out.println("left:" + left.myValue + " " + left.myWeight);
+			//System.out.println("right" + right.myValue + " " + right.myWeight);
 			
 			HuffNode mergeW = new HuffNode(0,left.myWeight + right.myWeight, left, right);
 			
@@ -160,7 +164,7 @@ public class HuffProcessor {
 		}
 		
 		HuffNode root = pq.remove();
-		System.out.println("root: " + root.myValue + " " + root.myWeight);
+		//System.out.println("root: " + root.myValue + " " + root.myWeight);
 		
 		return root;
 	}
