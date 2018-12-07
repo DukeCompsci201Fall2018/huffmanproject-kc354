@@ -50,7 +50,7 @@ public class HuffProcessor {
 		String[] codings = makeCodingsFromTree(root);
 		
 		
-		out.writeBits(BIT_PER_INT, HUFF_TREE);
+		out.writeBits(BITS_PER_INT, HUFF_TREE);
 		writeHeader(root, out);
 		
 		in.reset();
@@ -69,10 +69,6 @@ public class HuffProcessor {
 		{
 			int letter = in.readBits(BITS_PER_WORD);
 			if(letter == -1)
-			{
-				throw new HuffException("bad input");
-			}
-			if(letter == PSEUDO_EOF)
 			{
 				break;
 			}
@@ -117,11 +113,16 @@ public class HuffProcessor {
 	{
 		if (root == null)
 		{
+			System.out.println("Root is null");
 			return;
 		}
 		if (root.myLeft == null && root.myRight == null)
 		{
 			encodings[root.myValue] = path;
+			if (myDebugLevel >= DEBUG_HIGH)
+			{
+				System.out.printf("encoding for %d is $s\n", root.myValue, path);
+			}
 			return;
 		}
 		codingHelper(root.myLeft, path + "0", encodings);
@@ -138,19 +139,28 @@ public class HuffProcessor {
 			{
 				pq.add(new HuffNode(k, counts[k], null, null));
 			}
+		}
+		if (myDebugLevel >= DEBUG_HIGH)
+		{
+			System.out.printf("pq created with %d nodes\n", pq.size());
+		}
 			
-			while(pq.size() > 1)
-			{
-				HuffNode left = pq.remove();
-				HuffNode right = pq.remove();
-				
-				HuffNode mergeW = new HuffNode(0,left.myWeight + right.myWeight, left, right);
-				
-				pq.add(mergeW);
-			}
+			
+		while(pq.size() > 1)
+		{
+			HuffNode left = pq.remove();
+			HuffNode right = pq.remove();
+			
+			System.out.println("left:" + left.myValue + " " + left.myWeight);
+			System.out.println("right" + right.myValue + " " + right.myWeight);
+			
+			HuffNode mergeW = new HuffNode(0,left.myWeight + right.myWeight, left, right);
+			
+			pq.add(mergeW);
 		}
 		
 		HuffNode root = pq.remove();
+		System.out.println("root: " + root.myValue + " " + root.myWeight);
 		
 		return root;
 	}
@@ -166,10 +176,6 @@ public class HuffProcessor {
 			
 			if(val == -1)
 			{
-				throw new HuffException("bad input");
-			}
-			if(val == PSEUDO_EOF)
-			{
 				break;
 			}
 			else
@@ -179,6 +185,17 @@ public class HuffProcessor {
 		}
 		
 		freqs[PSEUDO_EOF] = 1;
+		
+		if (myDebugLevel >= DEBUG_HIGH)
+		{
+			for (int c = 0; c < freqs.length; c++)
+			{
+				if(freqs[c] > 0)
+				{
+					System.out.println(c + " " + freqs[c]);
+				}
+			}
+		}
 		
 		return freqs;
 	}
