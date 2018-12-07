@@ -58,6 +58,8 @@ public class HuffProcessor {
 
 		out.close();
 	}
+	
+	// Write the compressed bits (the body)
 	private void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) 
 	{
 		while(true)
@@ -95,6 +97,7 @@ public class HuffProcessor {
 		}
 	}
 
+	// Create an array of all the encodings using the Huffman tree
 	private String[] makeCodingsFromTree(HuffNode root) 
 	{
 		String[] encodings = new String[ALPH_SIZE + 1];
@@ -102,26 +105,23 @@ public class HuffProcessor {
 		return encodings;
 	}
 
+	// Helper method for makeCodingsFromTree
 	private void codingHelper(HuffNode root, String path, String[] encodings) 
 	{
 		if (root == null)
 		{
-			//System.out.println("Root is null");
 			return;
 		}
 		if (root.myLeft == null && root.myRight == null)
 		{
 			encodings[root.myValue] = path;
-			if (myDebugLevel >= DEBUG_HIGH)
-			{
-				System.out.printf("encoding for %d is $s\n", root.myValue, path);
-			}
 			return;
 		}
 		codingHelper(root.myLeft, path + "0", encodings);
 		codingHelper(root.myRight, path + "1", encodings);
 	}
 
+	// Make the Huffman tree
 	private HuffNode makeTreeFromCounts(int[] counts) 
 	{
 		PriorityQueue<HuffNode> pq = new PriorityQueue<>();
@@ -133,11 +133,6 @@ public class HuffProcessor {
 				pq.add(new HuffNode(k, counts[k], null, null));
 			}
 		}
-		if (myDebugLevel >= DEBUG_HIGH)
-		{
-			System.out.printf("pq created with %d nodes\n", pq.size());
-		}
-			
 			
 		while(pq.size() > 1)
 		{
